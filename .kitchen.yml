@@ -1,0 +1,30 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  hostname: "orginal-hostname"
+
+provisioner:
+  name: chef_zero
+  client_rb:
+    "Ohai::Config[:disabled_plugins] =":
+      - hostname
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu
+
+suites:
+  - name: default
+    run_list:
+      - recipe[kitchen-ohai]
+      - recipe[mock_ohai_plugin::default]
+    verifier:
+      inspec_tests:
+        - test/recipes
+    attributes:
+      kitchen_ohai:
+        values:
+          hostname: "mocked-hostname"
